@@ -1,0 +1,77 @@
+Table PRODUCTOS {
+  id int [pk] 
+  product_code varchar [unique]
+  description varchar
+  price decimal
+}
+
+Table PRODUCTOS_NOMBRES {
+  id int [pk]  
+  product_id int [ref: > PRODUCTOS.id]
+  product_name varchar
+}
+
+Table PROVEEDORES {
+  id int [pk]
+  supplier_name varchar
+  phone varchar
+}
+
+Table PRODUCTOS_PROVEEDORES {
+  product_id int [ref: > PRODUCTOS.id]
+  supplier_id int [ref: > PROVEEDORES.id]
+
+  indexes {
+    (product_id, supplier_id) [pk]
+  }
+}
+
+Table ALMACENES {
+  id int [pk]
+  warehouse_name varchar
+}
+
+Table INVENTARIO {
+  id int [pk]
+  product_id int [ref: > PRODUCTOS.id]
+  warehouse_id int [ref: > ALMACENES.id]
+  stock int
+}
+
+Table EMPLEADOS {
+  id int [pk]
+  employee_name varchar
+  phone varchar
+}
+
+Table MOVIMIENTOS_INVENTARIO {
+  id int [pk]
+  product_id int [ref: > PRODUCTOS.id]
+  warehouse_id int [ref: > ALMACENES.id]
+  employee_id int [ref: > EMPLEADOS.id]
+  movement_type varchar
+  movement_date datetime
+  quantity int
+  comments text
+}
+
+Table CLIENTES {
+  id int [pk]
+  client_name varchar
+  phone varchar
+  address varchar
+}
+
+Table PEDIDOS {
+  id int [pk]
+  client_id int [ref: > CLIENTES.id] 
+  order_date datetime
+}
+
+Table PEDIDOS_DETALLE {
+  id int [pk]
+  order_id int [ref: > PEDIDOS.id]
+  product_id int [ref: > PRODUCTOS.id]
+  quantity int
+  unit_price decimal
+}
