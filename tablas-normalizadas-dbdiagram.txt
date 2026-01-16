@@ -1,77 +1,87 @@
-Table PRODUCTOS {
-  id int [pk] 
-  product_code varchar [unique]
+ 1. Tabla de productos (mal diseñada)
+ Problemas:
+- Un mismo producto puede tener varios nombres
+- Proveedor dentro de producto
+- Almacén dentro de producto
+
+Table PRODUCTOS_GENERAL {
+  id int [pk]
+  product_code varchar
+  product_name varchar
+  product_name_alt varchar
   description varchar
   price decimal
-}
-
-Table PRODUCTOS_NOMBRES {
-  id int [pk]  
-  product_id int [ref: > PRODUCTOS.id]
-  product_name varchar
-}
-
-Table PROVEEDORES {
-  id int [pk]
   supplier_name varchar
-  phone varchar
-}
-
-Table PRODUCTOS_PROVEEDORES {
-  product_id int [ref: > PRODUCTOS.id]
-  supplier_id int [ref: > PROVEEDORES.id]
-
-  indexes {
-    (product_id, supplier_id) [pk]
-  }
-}
-
-Table ALMACENES {
-  id int [pk]
+  supplier_phone varchar
   warehouse_name varchar
-}
-
-Table INVENTARIO {
-  id int [pk]
-  product_id int [ref: > PRODUCTOS.id]
-  warehouse_id int [ref: > ALMACENES.id]
   stock int
 }
+
+
+
+ 2. Tabla de movimientos de inventario (mezclada)
+ Problemas:
+- Producto duplicado
+- Empleado sin identificador
+- No existe tabla real de almacenes
+
+Table MOVIMIENTOS_INVENTARIO {
+  id int [pk]
+  product_code varchar
+  product_name varchar
+  movement_type varchar
+  movement_date datetime
+  quantity int
+  employee_name varchar
+  employee_phone varchar
+  warehouse_name varchar
+  comments text
+}
+
+ 3. Tabla de empleados
+ Problemas:
+- Datos de inventario dentro de empleados
+- Dependencias transitivas
 
 Table EMPLEADOS {
   id int [pk]
   employee_name varchar
   phone varchar
+  warehouse_name varchar
+  last_movement_date datetime
+  last_product_handled varchar
 }
 
-Table MOVIMIENTOS_INVENTARIO {
-  id int [pk]
-  product_id int [ref: > PRODUCTOS.id]
-  warehouse_id int [ref: > ALMACENES.id]
-  employee_id int [ref: > EMPLEADOS.id]
-  movement_type varchar
-  movement_date datetime
-  quantity int
-  comments text
-}
+ 4. Tabla de clientes y proveedores (mezclados)
+ Problemas:
+- Clientes y proveedores en la misma tabla
+- Datos de pedidos dentro de contactos
 
-Table CLIENTES {
+Table CONTACTOS_COMERCIALES {
   id int [pk]
-  client_name varchar
+  name varchar
+  type varchar   // cliente o proveedor
   phone varchar
   address varchar
+  last_order_id varchar
+  last_order_amount decimal
 }
+
+
+ 5. Tabla de pedidos (mal estructurada)
+ Problemas:
+- Un pedido solo puede tener un producto
+- Producto y cliente duplicados
+- Total depende de otros campos
 
 Table PEDIDOS {
   id int [pk]
-  client_id int [ref: > CLIENTES.id] 
   order_date datetime
-}
-
-Table PEDIDOS_DETALLE {
-  id int [pk]
-  order_id int [ref: > PEDIDOS.id]
-  product_id int [ref: > PRODUCTOS.id]
+  client_name varchar
+  client_phone varchar
+  product_name varchar
+  product_code varchar
   quantity int
-  unit_price decimal
+  product_price decimal
+  order_total decimal
 }

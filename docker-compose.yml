@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: secrets/my_sql_root_pwd.txt
+      MYSQL_DATABASE: yupit_benitez_roberto
+      MYSQL_USER: secrets/my_sql_user.txt
+      MYSQL_PASSWORD: secrets/my_sql_pwd.txt
+    ports:
+      - "3306:3306"
